@@ -1,5 +1,7 @@
 # Reproduction: Kang et al. 2018 — IFN-β stimulation of PBMCs (scRNA-seq)
 
+> 🇨🇳 Chinese version: [README.zh-CN.md](README.zh-CN.md)
+
 **One-line summary**: Reproduce the core single-cell findings of Kang et al., *Nature Biotechnology* (2018) on IFN-β–stimulated peripheral blood mononuclear cells, using a fully reproducible, version-controlled pipeline.
 
 ## What this project does
