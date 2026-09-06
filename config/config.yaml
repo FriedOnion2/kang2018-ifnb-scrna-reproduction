@@ -1,0 +1,4 @@
+# config/config.yaml — pipeline configuration
+data_dir: "data/raw"
+species: "human"
+mito_pattern: "^MT-"

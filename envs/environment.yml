@@ -1,0 +1,13 @@
+name: repro-kang
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - r-base=4.3.2
+  - r-seurat=5.0.1
+  - r-tidyverse=2.0.0
+  - r-ggplot2=3.4.4
+  - r-patchwork=1.2.0
+  - snakemake-minimal=8.10.0
+  - wget=1.21.4
