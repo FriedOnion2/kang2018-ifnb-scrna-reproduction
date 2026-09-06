@@ -65,6 +65,10 @@ Rscript scripts/04_differential.R
 
 All analysis was run end-to-end on Windows 11 from the raw GEO matrices.
 
+![UMAP by condition](results/figures/umap_by_condition.png)
+
+![UMAP by cell type](results/figures/umap_by_celltype.png)
+
 Final figures in `results/figures/`:
 
 - `umap_by_condition.pdf` — UMAP colored by condition (CTRL vs STIM)
