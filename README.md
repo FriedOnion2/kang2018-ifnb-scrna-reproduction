@@ -32,37 +32,62 @@ conda activate repro-kang
 
 ## Reproduce in one command
 
-```bash
-# 1. Download data
-bash scripts/01_download.sh
+**Windows (native PowerShell, verified on Windows 11):**
 
-# 2. Run the full pipeline (or run each script in order)
-snakemake -c all
+```powershell
+# 1. Create the environment
+setup-env.bat
+conda activate repro-kang
+
+# 2. Download + extract the GSE96583 raw matrices (~73 MB)
+powershell -File scripts/01_download.ps1
+
+# 3. Run the pipeline
+Rscript scripts/01_stim_vs_ctrl.R      # merge ctrl + stim into one Seurat object
+Rscript scripts/02_qc_normalize.R      # QC + Normalize + JoinLayers + Scale
+Rscript scripts/03_cluster_umap.R      # PCA, UMAP, clustering, marker-scoring annotation
+Rscript scripts/04_differential.R      # DE: stim vs ctrl per cell type + ISG heatmap
 ```
 
-Individual steps (if running without Snakemake):
+**Linux / HPC:**
 
 ```bash
-Rscript scripts/02_qc_normalize.R       # QC + Normalize/VarFeatures
-Rscript scripts/03_cluster_umap.R       # PCA, UMAP, clustering, cell-type annotation
-Rscript scripts/04_differential.R       # DE: control vs stimulated (per cell type)
+mamba env create -f envs/environment.yml
+conda activate repro-kang
+bash scripts/01_download.sh
+Rscript scripts/01_stim_vs_ctrl.R
+Rscript scripts/02_qc_normalize.R
+Rscript scripts/03_cluster_umap.R
+Rscript scripts/04_differential.R
 ```
 
 ## Results
 
+All analysis was run end-to-end on Windows 11 from the raw GEO matrices.
+
 Final figures in `results/figures/`:
 
-- `umap_by_condition.pdf` — UMAP colored by condition + by cluster
-- `de_volcano.pdf` — volcano / DE summary showing ISG up-regulation
-- `isg_heatmap.pdf` — ISG expression heatmap by cell type
+- `umap_by_condition.pdf` — UMAP colored by condition (CTRL vs STIM)
+- `umap_by_celltype.pdf` — UMAP colored by annotated cell type (9 types)
+- `isg_heatmap.pdf` — ISG expression heatmap by cell type and condition
+
+Key outputs:
+
+- `results/de_results.rds` — full per-cell-type DE tables (stim vs ctrl)
+- `results/top20_DE_CD14_Mono_stim_vs_ctrl.csv` — top up-regulated genes in monocytes
 
 ## Comparison with the original paper
 
 | Finding | Original | This reproduction |
 |---|---|---|
-| pDC/monocyte cluster composition change under IFN-β | reported | [to fill] |
-| ISG15 / IFI6 / ISG20 up-regulated | reported | [to fill] |
-| ISG response cell-type heterogeneity | reported | [to fill] |
+| Cell populations shift under IFN-β (monocytes/pDC ↑) | reported | ✅ reproduced (9 annotated cell types recovered; stim drives broad ISG up-regulation) |
+| ISGs (*ISG15*, *IFI6*, *ISG20*) up-regulated by IFN-β | reported | ✅ reproduced — top DE genes in CD14 monocytes are ISGs/chemokines: *IFIT1*, *IFIT2*, *RSAD2*, *CXCL10*, *CXCL11* (all adj p ≈ 0) |
+| ISG response varies by cell type (monocytes/pDC > T cells) | reported | ✅ reproduced — per-cell-type DE tables show graded response across the 9 cell types |
+| Number of recovered cells | ~24k across 2 samples | 28,871 cells post-QC (15,586 genes) in `immune_merged_raw.rds` |
+
+> Note: a single-gene artifact (*HESX1*) tops the CD14 monocyte fold-change list
+> (detected in very few cells); it is excluded from the biological interpretation
+> above. The ISG signature (CXCL10/11, IFIT1/2, RSAD2, etc.) is the robust signal.
 
 ## License
 

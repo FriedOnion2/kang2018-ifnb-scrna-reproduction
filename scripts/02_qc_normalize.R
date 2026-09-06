@@ -12,6 +12,8 @@ immune.obj <- subset(immune.obj,
 
 # --- Normalize + variable features + scale --------------------------------
 immune.obj <- NormalizeData(immune.obj)
+# Seurat 5: merge() leaves per-sample layers; join before downstream DE/figure.
+immune.obj <- JoinLayers(immune.obj)
 immune.obj <- FindVariableFeatures(immune.obj,
                                    selection.method = "vst", nfeatures = 2000)
 all.genes <- rownames(immune.obj)
