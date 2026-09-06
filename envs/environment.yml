@@ -2,12 +2,14 @@ name: repro-kang
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
-  - r-base=4.3.2
-  - r-seurat=5.0.1
-  - r-tidyverse=2.0.0
-  - r-ggplot2=3.4.4
-  - r-patchwork=1.2.0
-  - snakemake-minimal=8.10.0
-  - wget=1.21.4
+  # Pin R 4.4: R 4.5.x (ucrt) + MinGW-w64 runtime 16.x on Windows triggers a
+  # "32 bit pseudo relocation out of range" crash in RcppEigen/Seurat DLLs.
+  # R 4.4 (r44) uses the older, stable MinGW runtime and pairs cleanly with
+  # Seurat 5.5.1.
+  - r-base=4.4
+  - r-seurat=5.5.1
+  - r-tidyverse
+  - r-ggplot2
+  - r-patchwork
+  - snakemake-minimal
